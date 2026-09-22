@@ -24,5 +24,3 @@ def emotion_detector(text_to_analyze):
                          'dominant_emotion': emotions[scores.index(max(scores))]
                          }
     return output_dictionary
-
-
