@@ -1,8 +1,9 @@
 ''' Emotion detection function using IBM's Watson AI API.'''
-import requests
 import json
+import requests
 
 def emotion_detector(text_to_analyze):
+    '''Function receives and parses output from Watson AI'''
     url_base = 'https://sn-watson-emotion.labs.skills.network'
     url = url_base + '/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
     header = {"grpc-metadata-mm-model-id":
@@ -10,8 +11,15 @@ def emotion_detector(text_to_analyze):
     myobj = { "raw_document": { "text": text_to_analyze } }
 
     # Sending a POST request to the emotion detector API:
-    response = requests.post(url, json=myobj, headers=header)
-    
+    response = requests.post(url, json=myobj, headers=header, timeout=30)
+    if response.status_code == 400:
+        output_dictionary = {'anger': None,
+                             'disgust': None,
+                             'fear': None,
+                             'joy': None,
+                             'sadness': None,
+                             'dominant_emotion': None}
+        return output_dictionary
     # Parsing the JSON response from the API
     formatted_response = json.loads(response.text)
     emotions = list(formatted_response['emotionPredictions'][0]['emotion'].keys())
